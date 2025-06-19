@@ -1,0 +1,77 @@
+package org.example.novaTech.Producer;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.novaTech.model.Task;
+
+import java.util.concurrent.*;
+
+public class ConcurQueueLab{
+    static final int numberOfTasks = 5;
+    static BlockingQueue<Task> taskQueue = new PriorityBlockingQueue<>(10);
+
+
+    public static void main(String[] args) throws InterruptedException {
+
+
+        for(int i = 0; i<3; i++){
+            new Thread(new Producer()).start();
+            //sleep for 10 seconds
+        }
+
+        //consumer thread pool
+        ExecutorService consumerPool = Executors.newFixedThreadPool(3);
+        Consumer consumerOne = new Consumer();
+        for(int i = 0; i<100; i++){
+            consumerPool.execute(consumerOne);
+        }
+
+        Thread.sleep(20000);
+        consumerPool.shutdown();
+
+    }
+}
+
+
+class Consumer implements Runnable{
+    @Override
+    public void run() {
+        try {
+            Task task = ConcurQueueLab.taskQueue.take();
+            System.out.println("Processing tasks " + task.getName());
+            task.setProcessed(true);
+            System.out.println("Task processed " + task);
+
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+}
+
+
+@AllArgsConstructor
+class Producer implements Runnable{
+    @Override
+    public void run() {
+        for(int k=1; k<5; k++) {
+            for (int i = 1; i < ConcurQueueLab.numberOfTasks; i++) {
+                //log here
+                System.out.println(Thread.currentThread().getName() + ": creating task " + i);
+                Task task = Task.builder()
+                        .build();
+                try {
+                    ConcurQueueLab.taskQueue.put(task);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            //delay thread
+            try {
+                Thread.sleep(500);
+                System.out.println();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+}
