@@ -1,4 +1,4 @@
-package com.NovaTech.dispatcher.model;
+package com.NovaTech.dispatcher.task;
 
 import lombok.*;
 import java.time.Instant;

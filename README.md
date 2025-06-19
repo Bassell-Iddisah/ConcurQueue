@@ -4,13 +4,12 @@
 
 ## A multithreaded task dispatch system simulating real-world job submission and processing.
 
----
 
 A paragraph that explains what the project does and add SEO words. Be specific if needed.
 
----
 `
-Add a git or visual of how the project works`
+Add a git or visual of how the project works
+`
 ---
 
 ## 🛠 Features
