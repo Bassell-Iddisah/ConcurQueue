@@ -1,40 +1,39 @@
 package com.NovaTech.dispatcher.producer;
 
-import com.NovaTech.dispatcher.task.Task;
-import com.NovaTech.dispatcher.task.TaskStatus;
-import com.NovaTech.dispatcher.repository.SharedTaskQueue;
-import lombok.AllArgsConstructor;
+import com.NovaTech.dispatcher.model.Task;
+import com.NovaTech.dispatcher.repository.TaskRepository;
+import java.util.Random;
 
-import java.time.Instant;
-import java.util.UUID;
-
-@AllArgsConstructor
 public class Producer implements Runnable {
-    private int timeCounter = 3;
+    private final TaskRepository taskRepository;
+    private final String producerName;
+    private final Random random = new Random();
+
+    public Producer(String name, TaskRepository taskRepository) {
+        this.producerName = name;
+        this.taskRepository = taskRepository;
+    }
 
     @Override
     public void run() {
         try {
-            Thread.sleep(5000);
+            while (true) {
+                int taskCount = random.nextInt(3) + 1; // 1-3 tasks
+                System.out.println();
+                for (int i = 0; i < taskCount; i++) {
+                    Task task = generateTask();
+                    taskRepository.addTask(task);
+                    System.out.printf("[%s] produced task: %s%n", producerName, task);
+                }
+                Thread.sleep(5000); // Wait 5 seconds
+            }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            return;
         }
+    }
 
-        for (int i = 0; i < timeCounter; i++) {
-            Task currentTask = Task.builder()
-                    .id(UUID.randomUUID())
-                    .name("Task" + i)
-                    .priority((i + timeCounter) % timeCounter)
-                    .status(TaskStatus.SUBMITTED)
-                    .createdTimeStamp(Instant.now())
-                    .build();
-
-            try {
-                SharedTaskQueue.add(currentTask);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-            }
-        }
+    private Task generateTask() {
+        int priority = random.nextBoolean() ? 1 : 10; // 1=low, 10=high
+        return new Task("Task-" + random.nextInt(1000), priority, "Payload");
     }
 }

@@ -1,4 +1,4 @@
-package com.NovaTech.dispatcher.task;
+package com.NovaTech.dispatcher;
 
 public enum TaskStatus {
     SUBMITTED,
