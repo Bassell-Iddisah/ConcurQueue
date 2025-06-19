@@ -1,10 +1,6 @@
-package com.gentleninja;
+package com.NovaTech.dispatcher;
 
-/**
- * Hello world!
- *
- */
-public class App {
+public class DispatcherApp {
     public static void main( String[] args ) {
         System.out.println( "Hello World!" );
     }

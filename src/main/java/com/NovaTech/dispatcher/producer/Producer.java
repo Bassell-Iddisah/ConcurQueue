@@ -1,6 +1,6 @@
-package com.gentleninja.producer;
+package com.NovaTech.producer;
 
-import com.gentleninja.model.Task;
+import com.NovaTech.model.Task;
 import lombok.AllArgsConstructor;
 
 import java.util.concurrent.BlockingQueue;
