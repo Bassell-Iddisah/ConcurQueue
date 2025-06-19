@@ -1,4 +1,4 @@
-package com.NovaTech;
+package com.NovaTech.dispatcher;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
