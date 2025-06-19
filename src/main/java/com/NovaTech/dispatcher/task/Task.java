@@ -23,4 +23,9 @@ public class Task implements Comparable<Task>{
     public int compareTo(Task other) {
         return Integer.compare(this.priority, other.priority);
     }
+
+    @Override
+    public String toString() {
+        return String.format("Task(Id: %s,Title: %s, Status: %s,)", this.id, this.name, this.status);
+    }
 }

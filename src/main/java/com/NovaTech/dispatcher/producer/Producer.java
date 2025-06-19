@@ -1,32 +1,40 @@
 package com.NovaTech.dispatcher.producer;
 
-import com.NovaTech.dispatcher.model.Task;
+import com.NovaTech.dispatcher.task.Task;
+import com.NovaTech.dispatcher.task.TaskStatus;
 import com.NovaTech.dispatcher.repository.SharedTaskQueue;
-import lombok.*;
+import lombok.AllArgsConstructor;
+
+import java.time.Instant;
+import java.util.UUID;
 
 @AllArgsConstructor
-class Producer implements Runnable{
+public class Producer implements Runnable {
+    private int timeCounter = 3;
+
     @Override
     public void run() {
-        for(int k=1; k<5; k++) {
-            for (int i = 1; i < SharedTaskQueue.getSize(); i++) {
-                //log here
-                System.out.println(Thread.currentThread().getName() + ": creating task " + i);
-                Task task = Task.builder()
-                        .build();
-                try {
-                    SharedTaskQueue.add(task);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-            }
-            }
-            //delay thread
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            return;
+        }
+
+        for (int i = 0; i < timeCounter; i++) {
+            Task currentTask = Task.builder()
+                    .id(UUID.randomUUID())
+                    .name("Task" + i)
+                    .priority((i + timeCounter) % timeCounter)
+                    .status(TaskStatus.SUBMITTED)
+                    .createdTimeStamp(Instant.now())
+                    .build();
+
             try {
-                Thread.sleep(500);
-                System.out.println();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                SharedTaskQueue.add(currentTask);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
             }
         }
     }
+}
