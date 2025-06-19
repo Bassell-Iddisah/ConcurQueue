@@ -1,25 +1,42 @@
 package com.NovaTech.dispatcher.repository;
 
-import com.NovaTech.dispatcher.model.Task;
+import com.NovaTech.dispatcher.task.Task;
+import com.NovaTech.dispatcher.task.TaskStatus;
 import lombok.*;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
+
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
 public class SharedTaskQueue {
-    private int size = 0;
-    private BlockingQueue<Task> TaskQueue = new PriorityBlockingQueue<>();
 
-    // Add a Task to sharedQueue
-    public static boolean add(Task task) {
-        return false;
+    private static BlockingQueue<Task> TaskQueue = new LinkedBlockingQueue<>(10);
+
+    public static String add(Task task) {
+        TaskQueue.add(task);
+        task.setStatus(TaskStatus.SUBMITTED);
+        return task.toString();
     }
 
-    // Remove Task from sharedQueue
-    public boolean pop(Task task) {
-        return false;
+    public static List<Task> getAll() {
+        return TaskQueue.stream()
+                .map(Task -> Task)
+                .collect(Collectors.toList());
+    }
+
+    public static Task getTaskById(String id) {
+        return TaskQueue.peek();
+    }
+
+    public String pop(Task task) {
+        TaskQueue.remove(task);
+        return String.format("Removed task %s", task.getName());
+    }
+
+    public static int getSize() {
+        return TaskQueue.size();
     }
 }
